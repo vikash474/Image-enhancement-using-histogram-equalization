@@ -1,0 +1,45 @@
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+image = cv2.imread('1pxl.png')
+image_bw = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+clahe = cv2.createCLAHE(clipLimit=5)
+final_img_clahe = clahe.apply(image_bw)
+normal_hist = cv2.equalizeHist(image_bw)
+
+
+cv2.imshow("Original Image", image)
+cv2.imshow("CLAHE Image", final_img_clahe)
+cv2.imshow("Histogram Equalized Image", normal_hist)
+
+# Save the images
+cv2.imwrite('Original_Image.jpg', image)
+cv2.imwrite('CLAHE_Image.jpg', final_img_clahe)
+cv2.imwrite('Histogram_Equalized_Image.jpg', normal_hist)
+
+hist_bw = cv2.calcHist([image_bw], [0], None, [256], [0, 256])
+hist_clahe = cv2.calcHist([final_img_clahe], [0], None, [256], [0, 256])
+hist_equalized = cv2.calcHist([normal_hist], [0], None, [256], [0, 256])
+plt.figure(figsize=(12, 8))
+plt.subplot(2, 3, 1)
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.title('Original Image')
+plt.subplot(2, 3, 4)
+plt.plot(hist_bw)
+plt.title('Histogram (Original)')
+plt.subplot(2, 3, 3)
+plt.imshow(normal_hist, cmap='gray')
+plt.title('Histogram Equalized Image')
+plt.subplot(2, 3, 6)
+plt.plot(hist_equalized)
+plt.title('Histogram (Equalized)')
+plt.subplot(2, 3, 2)
+plt.imshow(final_img_clahe, cmap='gray')
+plt.title('CLAHE Image')
+plt.subplot(2, 3, 5)
+plt.plot(hist_clahe)
+plt.title('Histogram (CLAHE)')
+plt.tight_layout()
+plt.show()
+cv2.waitKey(0)
+cv2.destroyAllWindows()
